@@ -33,22 +33,3 @@ jobs:
           docker info --format 'mirrors: {{json .RegistryConfig.Mirrors}}'
           docker pull alpine:3.22
           docker pull host.k3d.internal:5002/dagger/engine:v0.21.11
-  # Manual runs only: the testbed's scale set is also labelled ubuntu-24.04-arm.
-  # Does GitHub split these between it and the hosted arm pool?
-  race:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-24.04-arm
-    strategy:
-      matrix:
-        n: [1, 2, 3, 4, 5, 6, 7, 8]
-    steps:
-      - run: |
-          echo "race ${{ matrix.n }}: ${RUNNER_ENVIRONMENT} ${RUNNER_NAME}"
-          sleep 30
-  # Only ARC carries arc-arm64, so this proves ubuntu-24.04-arm reached GitHub too.
-  label-control:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: [arc-arm64, ubuntu-24.04-arm]
-    steps:
-      - run: |
-          echo "control: ${RUNNER_ENVIRONMENT} ${RUNNER_NAME}"
