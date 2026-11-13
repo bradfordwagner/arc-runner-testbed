@@ -1,0 +1,26 @@
+name: smoke
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ${{ vars.ARC_UP == 'true' && 'arc-arm64' || 'ubuntu-24.04-arm' }}
+    steps:
+      - uses: actions/checkout@v5
+      - run: |
+          echo "runner: ${RUNNER_NAME} (ARC_UP=${{ vars.ARC_UP }})"
+          uname -m
+
+  # Manual runs only: four jobs at once against a pod quota of 2, to watch the cap.
+  quota:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ${{ vars.ARC_UP == 'true' && 'arc-arm64' || 'ubuntu-24.04-arm' }}
+    strategy:
+      matrix:
+        n: [1, 2, 3, 4]
+    steps:
+      - run: |
+          echo "job ${{ matrix.n }} on ${RUNNER_NAME}"
+          sleep 90
