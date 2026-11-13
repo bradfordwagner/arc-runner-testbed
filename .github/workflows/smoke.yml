@@ -6,17 +6,17 @@ on:
 
 jobs:
   smoke:
-    runs-on: ${{ vars.ARC_UP == 'true' && 'arc-arm64' || 'ubuntu-24.04-arm' }}
+    runs-on: ${{ vars.ARC_HOSTS != '' && 'arc-arm64' || 'ubuntu-24.04-arm' }}
     steps:
       - uses: actions/checkout@v5
       - run: |
-          echo "runner: ${RUNNER_NAME} (ARC_UP=${{ vars.ARC_UP }})"
+          echo "runner: ${RUNNER_NAME} (ARC_HOSTS=${{ vars.ARC_HOSTS }})"
           uname -m
 
   # Manual runs only: four jobs at once against a pod quota of 2, to watch the cap.
   quota:
     if: github.event_name == 'workflow_dispatch'
-    runs-on: ${{ vars.ARC_UP == 'true' && 'arc-arm64' || 'ubuntu-24.04-arm' }}
+    runs-on: ${{ vars.ARC_HOSTS != '' && 'arc-arm64' || 'ubuntu-24.04-arm' }}
     strategy:
       matrix:
         n: [1, 2, 3, 4]
@@ -26,7 +26,7 @@ jobs:
           sleep 90
   # ARC only: host.k3d.internal exists only inside cicd.
   pull:
-    if: vars.ARC_UP == 'true'
+    if: vars.ARC_HOSTS != ''
     runs-on: arc-arm64
     steps:
       - run: |
