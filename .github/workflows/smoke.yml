@@ -50,4 +50,5 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     runs-on: [self-hosted, ubuntu-24.04-arm]
     steps:
-      - run: echo "control: ${RUNNER_ENVIRONMENT} ${RUNNER_NAME}"
+      - run: |
+          echo "control: ${RUNNER_ENVIRONMENT} ${RUNNER_NAME}"
