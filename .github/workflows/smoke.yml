@@ -24,3 +24,12 @@ jobs:
       - run: |
           echo "job ${{ matrix.n }} on ${RUNNER_NAME}"
           sleep 90
+  # ARC only: host.k3d.internal exists only inside cicd.
+  pull:
+    if: vars.ARC_UP == 'true'
+    runs-on: arc-arm64
+    steps:
+      - run: |
+          docker info --format 'mirrors: {{json .RegistryConfig.Mirrors}}'
+          docker pull alpine:3.22
+          docker pull host.k3d.internal:5002/dagger/engine:v0.21.11
